@@ -24,7 +24,6 @@ public class CircleProgressView extends View {
     private int mPaintColor = Color.RED;//画笔颜色
     private int mTextColor = Color.BLACK;//字体颜色
     private float mTextSize;//字体大小
-
     private int location;//从哪个位置开始
     private float startAngle;//开始角度
 
@@ -40,31 +39,30 @@ public class CircleProgressView extends View {
 
     public CircleProgressView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
+        //获取属性值
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.CircleProgressView);
         location = array.getInt(R.styleable.CircleProgressView_location, 1);
         mPaintWidth = array.getDimension(R.styleable.CircleProgressView_progress_paint_width, dip2px(context, 4));//默认4dp
         mPaintColor = array.getColor(R.styleable.CircleProgressView_progress_paint_color, mPaintColor);
         mTextSize = array.getDimension(R.styleable.CircleProgressView_progress_text_size, dip2px(context, 18));//默认18sp
         mTextColor = array.getColor(R.styleable.CircleProgressView_progress_text_color, mTextColor);
-
-
         array.recycle();
 
+        //画笔->背景圆弧
         mPaintOut = new Paint();
         mPaintOut.setAntiAlias(true);
         mPaintOut.setStrokeWidth(mPaintWidth);
         mPaintOut.setStyle(Paint.Style.STROKE);
         mPaintOut.setColor(Color.GRAY);
         mPaintOut.setStrokeCap(Paint.Cap.ROUND);
-
+        //画笔->进度圆弧
         mPaintCurrent = new Paint();
         mPaintCurrent.setAntiAlias(true);
         mPaintCurrent.setStrokeWidth(mPaintWidth);
         mPaintCurrent.setStyle(Paint.Style.STROKE);
         mPaintCurrent.setColor(mPaintColor);
         mPaintCurrent.setStrokeCap(Paint.Cap.ROUND);
-
+        //画笔->绘制字体
         mPaintText = new Paint();
         mPaintText.setAntiAlias(true);
         mPaintText.setStyle(Paint.Style.FILL);
@@ -103,11 +101,12 @@ public class CircleProgressView extends View {
 
         //绘制进度数字
         String text = mCurrent + "%";
+        //获取文字宽度
         float textWidth = mPaintText.measureText(text, 0, text.length());
         float dx = getWidth() / 2 - textWidth / 2;
         Paint.FontMetricsInt fontMetricsInt = mPaintText.getFontMetricsInt();
         float dy = (fontMetricsInt.bottom - fontMetricsInt.top) / 2 - fontMetricsInt.bottom;
-        float baseLine = getWidth() / 2 + dy;
+        float baseLine = getHeight() / 2 + dy;
         canvas.drawText(text, dx, baseLine, mPaintText);
 
         if (mLoadingCompleteListener != null && mCurrent == 100) {
